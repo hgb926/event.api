@@ -5,6 +5,7 @@ import com.study.event.api.event.dto.request.EventSaveDto;
 import com.study.event.api.event.dto.response.EventDetailDto;
 import com.study.event.api.event.dto.response.EventOneDto;
 import com.study.event.api.event.entity.Event;
+
 import com.study.event.api.event.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,16 +38,16 @@ public class EventService {
         // 이벤트 목록
         List<Event> events = eventsPage.getContent();
 
+        // 총 이벤트 개수
+        long totalElements = eventsPage.getTotalElements();
+
         List<EventDetailDto> eventDtoList = events
                 .stream().map(EventDetailDto::new)
                 .collect(Collectors.toList());
 
-        // 총 이벤트 개수
-        long totalElements = eventsPage.getTotalElements();
-
         Map<String, Object> map = new HashMap<>();
+        map.put("totalElements", totalElements);
         map.put("events", eventDtoList);
-        map.put("totalCount", totalElements);
 
         return map;
     }
@@ -55,6 +56,7 @@ public class EventService {
     public void saveEvent(EventSaveDto dto) {
         Event savedEvent = eventRepository.save(dto.toEntity());
         log.info("saved event: {}", savedEvent);
+
     }
 
     // 이벤트 단일 조회

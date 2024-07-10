@@ -2,12 +2,14 @@ package com.study.event.api.event.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.study.event.api.event.entity.Event;
 import lombok.*;
 
 import java.time.LocalDate;
 
-@Getter @ToString
+@Getter
+@ToString
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,8 +20,7 @@ public class EventDetailDto {
     private String title;
     @JsonFormat(pattern = "yyyy년 MM월 dd일")
     private LocalDate startDate;
-
-    @JsonProperty(value = "img-url")
+    @JsonProperty(value = "img_url")
     private String imgUrl;
 
     public EventDetailDto(Event event) {

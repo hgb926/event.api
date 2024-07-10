@@ -7,7 +7,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 
-@Getter @ToString
+@Getter
+@ToString
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,11 +29,11 @@ public class EventOneDto {
     @JsonFormat(pattern = "yyyy년 MM월 dd일")
     private LocalDate date;
 
-    public EventOneDto(Event e) {
-        this.id = e.getId().toString();
-        this.title = e.getTitle();
-        this.desc = e.getDescription();
-        this.image = e.getImage();
-        this.date = e.getDate();
+    public EventOneDto(Event event) {
+        this.id = event.getId().toString();
+        this.title = event.getTitle();
+        this.desc = event.getDescription();
+        this.image = event.getImage();
+        this.date = event.getDate();
     }
 }

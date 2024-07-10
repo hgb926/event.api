@@ -14,9 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 @Entity
-@Table(name = "tbl_event")
+@Table(name="tbl_event")
 public class Event {
 
     @Id
@@ -40,8 +39,7 @@ public class Event {
     private LocalDateTime createdAt; // 이벤트 등록 날짜
 
     public void changeEvent(EventSaveDto dto) {
-
-        this.title = dto.getTitle();
+        this.title =  dto.getTitle();
         this.date = dto.getBeginDate();
         this.image = dto.getImageUrl();
         this.description = dto.getDesc();
