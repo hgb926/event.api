@@ -2,6 +2,7 @@ package com.study.event.api.event.controller;
 
 import com.study.event.api.event.dto.request.EventUserSaveDto;
 import com.study.event.api.event.dto.request.LoginRequestDto;
+import com.study.event.api.event.dto.response.LoginResponseDto;
 import com.study.event.api.event.service.EventUserService;
 import com.study.event.api.exception.LoginFailException;
 import lombok.RequiredArgsConstructor;
@@ -49,8 +50,8 @@ public class EventUserController {
     public ResponseEntity<?> signIn(@RequestBody LoginRequestDto dto) {
 
         try {
-            eventUserService.authenticate(dto); // authenticate에 throw가 3개나 있다
-            return ResponseEntity.ok().body("login success");
+            LoginResponseDto responseDto = eventUserService.authenticate(dto);// authenticate에 throw가 3개나 있다
+            return ResponseEntity.ok().body(responseDto);
 
         } catch (LoginFailException e) {
             // 서비스에서 예외발생 (로그인 실패)
