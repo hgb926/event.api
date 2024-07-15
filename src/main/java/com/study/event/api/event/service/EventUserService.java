@@ -234,8 +234,6 @@ public class EventUserService {
                 .token(token)
                 .build();
 
-
-
     }
 }
 
