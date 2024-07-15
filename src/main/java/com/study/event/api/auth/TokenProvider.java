@@ -14,7 +14,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Component
 @Slf4j
@@ -73,9 +72,11 @@ public class TokenProvider {
     /**
      * 클라이언트가 전송한 토큰을 디코딩(복호화)하여 토큰의 서명 위조 여부를 확인
      * 그리고 토큰을 JSON으로 파싱하여 안에 들어있는 클레임(토큰 정보)을 리턴
-     * @param token
+     *
+     * @param token - 클라이언트가 보낸 토큰
+     * @return - 토큰에 들어있는 인증 정보들을 리턴 - 회원 식별 ID
      */
-    public void validateAndGetTokenInfo(String token) {
+    public String validateAndGetTokenInfo(String token) {
 
         // parserBuilder는 해체할 때 쓰는 메서드
         Claims claims = Jwts.parserBuilder()
@@ -89,6 +90,11 @@ public class TokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
         log.info("claims: {}", claims);
+
+        // 토큰에 인증된 회원의 PK
+        return claims.getSubject();
+
+
     }
 }
 
