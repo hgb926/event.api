@@ -1,7 +1,9 @@
 package com.study.event.api.event.controller;
 
 import com.study.event.api.event.dto.request.EventUserSaveDto;
+import com.study.event.api.event.dto.request.LoginRequestDto;
 import com.study.event.api.event.service.EventUserService;
+import com.study.event.api.exception.LoginFailException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -42,5 +44,22 @@ public class EventUserController {
         }
         return ResponseEntity.ok().body("saved success");
     }
+
+    @PostMapping("/sign-in") // login은 password가 날라오기 때문에 post
+    public ResponseEntity<?> signIn(@RequestBody LoginRequestDto dto) {
+
+        try {
+            eventUserService.authenticate(dto); // authenticate에 throw가 3개나 있다
+            return ResponseEntity.ok().body("login success");
+
+        } catch (LoginFailException e) {
+            // 서비스에서 예외발생 (로그인 실패)
+            String errorMessage = e.getMessage();
+            return ResponseEntity.status(422).body(errorMessage);
+        }
+    }
+
+
+
 
 }

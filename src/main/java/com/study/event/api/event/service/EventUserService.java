@@ -1,10 +1,12 @@
 package com.study.event.api.event.service;
 
 import com.study.event.api.event.dto.request.EventUserSaveDto;
+import com.study.event.api.event.dto.request.LoginRequestDto;
 import com.study.event.api.event.entity.EmailVerification;
 import com.study.event.api.event.entity.EventUser;
 import com.study.event.api.event.repository.EmailVerificationRepository;
 import com.study.event.api.event.repository.EventUserRepository;
+import com.study.event.api.exception.LoginFailException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,11 +44,36 @@ public class EventUserService {
         boolean exists = eventUserRepository.existsByEmail(email);
         log.info("Checking email {} is duplicate : {}", email, exists);
 
+        // 중복인데 회원가입이 마무리되지 않은 회원은 중복이 아니라고 판단
+        if (exists && notFinish(email)) {
+            // 인증메일 재발송
+            return false;
+        }
+
+
+
         // 중복이 아니면 선제적으로 회원가입을 시킴
         // 일련의 후속 처리 (데이터베이스 처리, 이메일 보내는 것...)
         if (!exists) processSignUp(email);
 
         return exists;
+    }
+
+    private boolean notFinish(String email) {
+        EventUser foundUser = eventUserRepository.findByEmail(email).orElseThrow();
+
+        if (!foundUser.isEmailVerified() || foundUser.getPassword() == null) {
+            // 기존 인증코드가 있는 경우 삭제
+            EmailVerification ev = emailVerificationRepository.findByEventUser(foundUser).orElse(null);
+
+            if (ev != null) {
+                emailVerificationRepository.delete(ev);
+            }
+
+            generateAndSendCode(email,foundUser);
+            return true;
+        }
+        return false;
     }
 
 
@@ -165,6 +192,33 @@ public class EventUserService {
         String encodedPassword = encoder.encode(password); // 암호화
         foundUser.confirm(encodedPassword);
         eventUserRepository.save(foundUser);
+    }
+
+    // 회원 인증 처리 (login)
+    public void authenticate(final LoginRequestDto dto) {
+
+        // 이메일을 통해 회원정보 조회
+        EventUser eventUser = eventUserRepository.findByEmail(dto.getEmail())
+                .orElseThrow(
+                        () -> new LoginFailException("가입된 회원이 아닙니다.")
+                );
+
+        // 이메일 인증을 안했거나 패스워드를 설정하지 않은 회원
+        if (!eventUser.isEmailVerified() || eventUser.getPassword() == null) {
+            throw new LoginFailException("회원가입이 중단된 회원입니다. 다시 가입해주세요.");
+        }
+
+        // 패스워드 검증
+        String inputPassword = dto.getPassword(); // 방금 입력받은 pw
+        String encodedPassword = eventUser.getPassword();  // DB에 저장된 암호화된 pw
+
+        if (!encoder.matches(inputPassword, encodedPassword)) { // 일치하지 않으면~
+            throw new LoginFailException("비밀번호가 틀렸습니다.");
+        }
+
+        // 로그인 성공
+        // 인증 정보를 어떻게 관리할 것인가? (핵심)
+
     }
 }
 
