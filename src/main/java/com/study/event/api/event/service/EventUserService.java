@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -234,6 +233,25 @@ public class EventUserService {
                 .token(token)
                 .build();
 
+    }
+
+    // 등업 처리
+    public LoginResponseDto promoteToPremium(String userId) {
+        // 회원 탐색
+        EventUser eventUser = eventUserRepository.findById(userId).orElseThrow();
+
+        // 등급 변경
+        eventUser.promoteToPremium(); // setter를 사용하지 않고, 메서드로 세터의 역할 대체
+        EventUser promotedUser = eventUserRepository.save(eventUser);
+
+        // 토큰 재발급 해야함. (claims에 들어있는 role은 갱신이 안되기때문에)
+        String token = tokenProvider.createToken(promotedUser);
+
+        return LoginResponseDto.builder()
+                .token(token)
+                .role(promotedUser.getRole().toString())
+                .email(promotedUser.getEmail())
+                .build();
     }
 }
 
