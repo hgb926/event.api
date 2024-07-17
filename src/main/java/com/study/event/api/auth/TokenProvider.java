@@ -1,10 +1,12 @@
 package com.study.event.api.auth;
 
 import com.study.event.api.event.entity.EventUser;
+import com.study.event.api.event.entity.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -74,9 +76,9 @@ public class TokenProvider {
      * 그리고 토큰을 JSON으로 파싱하여 안에 들어있는 클레임(토큰 정보)을 리턴
      *
      * @param token - 클라이언트가 보낸 토큰
-     * @return - 토큰에 들어있는 인증 정보들을 리턴 - 회원 식별 ID
+     * @return - 토큰에 들어있는 인증 정보들을 리턴 - 회원 식별 ID, email, 권한
      */
-    public String validateAndGetTokenInfo(String token) {
+    public TokenUserInfo validateAndGetTokenInfo(String token) {
 
         // parserBuilder는 해체할 때 쓰는 메서드
         Claims claims = Jwts.parserBuilder()
@@ -91,11 +93,34 @@ public class TokenProvider {
                 .getBody();
         log.info("claims: {}", claims);
 
-        // 토큰에 인증된 회원의 PK
-        return claims.getSubject();
-
-
+        // 토큰에 인증된 회원의 PK, email, 권한
+        return TokenUserInfo.builder()
+                .userId(claims.getSubject())
+                .email(claims.get("email", String.class))
+                .role(Role.valueOf(claims.get("role", String.class)))
+                .build()
+                ;
     }
+
+
+
+    // ======================================= //
+    //  기존엔 유저의 PK만 리턴했지만,
+    //  컨트롤러에게 많은 데이터를 보내기 위해 dto(객체) 생성
+    @Getter
+    @ToString
+    @EqualsAndHashCode
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class TokenUserInfo {
+
+        private String userId; // 기존 리턴값
+        private String email;
+        private Role role;
+    }
+
+
 }
 
 

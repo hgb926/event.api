@@ -2,11 +2,9 @@ package com.study.event.api.event.repository;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
 import com.study.event.api.event.entity.Event;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +28,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         // 페이징을 통한 조회
         List<Event> eventList = factory
                 .selectFrom(event)
+                .where(event.eventUser.id.eq(userId))
                 .orderBy(specifier(sort))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -39,6 +38,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         Long count = factory
                 .select(event.count())
                 .from(event)
+                .where(event.eventUser.id.eq(userId))
                 .fetchOne();
 
         return new PageImpl<>(eventList, pageable, count);
