@@ -62,7 +62,9 @@ public class EventService {
         // 로그인한 회원 정보 조회
         EventUser eventUser = eventUserRepository.findById(userId).orElseThrow();
 
+
         // 권한에 따른 글쓰기 제한
+        // 로그인한 회원 권한 조회 확인 + 현재 몇개 등록했는지?
         if (
                 eventUser.getRole() == Role.COMMON
                         && eventUser.getEventList().size() >= 4

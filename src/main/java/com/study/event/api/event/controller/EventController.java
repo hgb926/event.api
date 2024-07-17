@@ -53,9 +53,14 @@ public class EventController {
             @RequestBody EventSaveDto dto
     ) {
 
-
-        eventService.saveEvent(dto, userInfo.getUserId());
-        return ResponseEntity.ok().body("events saved!");
+        // Service에서 반환과정 중 new throw가 있기에 try, catch
+        try {
+            eventService.saveEvent(dto, userInfo.getUserId());
+            return ResponseEntity.ok().body("event saved!");
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
+            return ResponseEntity.status(401).body(e.getMessage());
+        }
     }
 
     // 단일 조회 요청
