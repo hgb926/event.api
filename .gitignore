@@ -1,6 +1,7 @@
 
 .idea/
 application.yml
+application-deploy.yml
 
 .gradle
 build/
