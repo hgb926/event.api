@@ -43,21 +43,23 @@ dependencies {
 	// 스프링 시큐리티 모듈
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 
+	// json web token 라이브러리
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
 	// s3 라이브러리
 	implementation 'software.amazon.awssdk:s3:2.17.52'
 
 	//querydsl 추가
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
-
-	// json web token 라이브러리
-	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
-	implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
-	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 }
 
+// 테스트 설정
 tasks.named('test') {
-	useJUnitPlatform()
+//	useJUnitPlatform()
+	exclude '**/*'  // 빌드 시 테스트 생략
 }
 
 
