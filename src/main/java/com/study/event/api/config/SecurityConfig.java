@@ -49,6 +49,9 @@ public class SecurityConfig {
                 // 여기까지는 시큐리티에서 기본제공하는 기능 다 off
                 .authorizeRequests() // 요청 별로 인가 설정
 
+                // WebSocket 경로 허용
+                .antMatchers("/signal/**").permitAll() // WebSocket 요청은 모두 허용
+
                 // /events/*     -> 뒤에 딱 하나만
                 // /events/**    -> 뒤에 여러개
                 .antMatchers(HttpMethod.DELETE,"/events/*").hasAuthority("ADMIN")
@@ -61,7 +64,7 @@ public class SecurityConfig {
 
                 // 나머지 요청은 전부 인증(로그인) 후 진행해라
                 .anyRequest().authenticated() // 인가 설정 on
-                ;
+        ;
 
         // 토큰 위조 검사 커스텀 필터 필터체인에 연결
         // CorsFilter(spring의 필터) 뒤에 커스텀 필터를 연결
