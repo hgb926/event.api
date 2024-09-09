@@ -56,7 +56,7 @@ public class SecurityConfig {
                 // 아래의 URL요청은 로그인 없이 모두 허용
                 .antMatchers("/", "/auth/**", "/file/**").permitAll()
 
-                // 위에선 auth/**는 다 풀어주지만! /auth/promote는 인증받고오라. COMMON만
+                // 위에선 auth/**는 다 풀어주지만 /auth/promote는 인증받고오라. COMMON만
                 .antMatchers(HttpMethod.PUT, "/auth/promote").hasAuthority("COMMON")
 
                 // 나머지 요청은 전부 인증(로그인) 후 진행해라

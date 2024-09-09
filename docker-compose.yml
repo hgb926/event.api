@@ -1,0 +1,26 @@
+
+services:
+  backend: # 스프링 앱
+    build: . # 작성된 도커파일대로 빌드
+    ports:
+      - "8888:8888"
+    depends_on:
+      - db
+    environment:
+      SPRING_PROFILES_ACTIVE: 'docker' # application-docker 사용
+      SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/puppy
+#      SPRING_DATASOURCE_URL: jdbc:mariadb://{밑에 Db}/spring7
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: mariadb
+
+  db:
+    image: mariadb:10 # 도커 허브에서 받아온 db
+    environment:
+      MYSQL_ROOT_PASSWORD: mariadb # mariaDB를 깔면서 ROOT 비번을 여기서 설정하는거
+      MYSQL_DATABASE: puppy
+    volumes: # 저장소, 도커 내부 경로
+      - db-data:/var/lib/mysql
+volumes:
+  db-data:
+
+
