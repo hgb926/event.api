@@ -52,6 +52,7 @@ public class SecurityConfig {
                 // WebSocket 경로 허용
                 .antMatchers("/signal/**").permitAll() // WebSocket 요청은 모두 허용
 
+
                 // /events/*     -> 뒤에 딱 하나만
                 // /events/**    -> 뒤에 여러개
                 .antMatchers(HttpMethod.DELETE,"/events/*").hasAuthority("ADMIN")
